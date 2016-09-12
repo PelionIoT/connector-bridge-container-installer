@@ -1,10 +1,12 @@
 #!/bin/sh
 
+#
+# DEBUG
+#
 # set -x
 
-
 #
-# Defaults...
+# Defaults
 #
 IMAGE="danson/connector-bridge-container-"
 TYPE="$1"
@@ -16,6 +18,13 @@ MQTT_PORT=""
 API_TOKEN=""
 LONG_POLL=""
 CLOUD_ARGS=""
+
+#
+# Enable/Disable previous bridge configuration save/restore
+#
+# Uncomment to ENABLE. Comment out to DISABLE
+#
+SAVE_PREV_CONFIG="YES"
 
 # START: Optional Configuration for Cloud Providers (IBM Watson IoT, MS Azure IoTHub, Amazon IoT)
 #
@@ -87,22 +96,26 @@ if [ "$(uname)" = "Darwin" ]; then
         # MacOS (toolkit docker installed (OLD))... default is to pin IP address to 192.168.99.100
         IP="192.168.99.100"
         echo "IP Address:" ${IP}
+	BASE_IP=${IP}
         IP=${IP}:
     else
         # MacOS (native docker installed) - dont use an IP address... 
-	IP=""
+	export IP=""
+	BASE_IP=${IP}
         echo "IP Address:" `hostname -s`
     fi
 elif [ "$(uname)" = "MINGW64_NT-10.0" ]; then
     # Windows - Must use the Docker Toolkit with the latest VirtualBox installed... pinned to 192.168.99.100 
     IP="192.168.99.100"
     echo "IP Address:" ${IP} 
+    BASE_IP=${IP}
     IP=${IP}:
 else
     # (assume) Linux - docker running as native host - use the host IP address
     IP="`ip route get 8.8.8.8 | awk '{print $NF; exit}'`"
     echo "IP Address:" ${IP}
-    IP=${IP}:
+    BASE_IP=${IP}
+    export IP=${IP}:
 fi
 
 if [ "${TYPE}X" = "X" ]; then
@@ -114,6 +127,7 @@ if [ "$2" != "" ]; then
     API_TOKEN="$2"
     LONG_POLL="$3"
 fi
+
 if [ "$2" = "use-long-polling" ]; then
     API_TOKEN="$3"
     LONG_POLL="$2"
@@ -158,6 +172,71 @@ if [ "${SUFFIX}X" = "X" ]; then
     exit 2
 fi
 
+
+#
+# Save a previous Configuration
+#
+save_config() {
+    if [ "${IP}X" = "X" ]; then
+	SSH_IP="localhost:"
+    else 
+	SSH_IP=${IP}
+    fi
+    echo "Saving previous bridge configuration..."
+    #echo scp -q -P 2222 arm@${SSH_IP}mds/connector-bridge/conf/gateway.properties .
+    scp -q -P 2222 arm@${SSH_IP}mds/connector-bridge/conf/gateway.properties .
+    if [ $? != 0 ]; then
+        echo "Saving of the previous configuration FAILED"
+    else
+        echo "Save succeeded."
+    fi
+    if [ -f gateway.properties ]; then
+        export SAVED_CONFIG="YES"
+    else
+        export SAVED_CONFIG="NO"
+    fi
+}
+
+#
+# Restore a previous Configuration
+#
+restore_config() {
+   if [ "${SAVED_CONFIG}X" = "YESX" ]; then
+ 	echo "Waiting for 8 seconds to have the container start up..."
+	sleep 8
+	if [ "${IP}X" = "X" ]; then
+            SSH_IP="localhost"
+            START="["
+	    STOP="]:"
+            SCP_IP="${SSH_IP}:"
+        else 
+            SSH_IP=${BASE_IP}
+	    START=""
+	    STOP=""
+	    SCP_IP="${SSH_IP}"
+        fi
+ 	echo "Beginning restoration... Updating known_hosts..."
+	# echo ssh-keygen -R ${START}${SSH_IP}${STOP}2222
+	ssh-keygen -R ${START}${SSH_IP}${STOP}2222
+        echo "Restoring previous configuration..."
+        # echo scp -q -P 2222 gateway.properties arm@${SCP_IP}mds/connector-bridge/conf
+        scp -q -q -P 2222 gateway.properties arm@${SCP_IP}mds/connector-bridge/conf
+	if [ $? != 0 ]; then
+	    echo "Restoration of the previous configuration FAILED"
+	else
+	    echo "Restoration succeeded... Restarting the bridge runtime..."
+	    # echo "ssh -f -p 2222 arm@${SSH_IP} /home/arm/restart.sh"
+	    ssh -f -p 2222 arm@${SSH_IP} /home/arm/restart.sh
+	    if [ $? != 0 ]; then
+                echo "Bridge restart FAILED"
+            else
+                echo "Bridge restarted."
+	    fi
+	fi
+        rm -f gateway.properties 2>&1 1>/dev/null
+   fi
+}
+
 DOCKER_VER="`docker --version`"
 if [ "${DOCKER_VER}X" = "X" ]; then
     echo "ERROR: docker does not appear to be installed! Please install docker and retry."
@@ -165,8 +244,10 @@ if [ "${DOCKER_VER}X" = "X" ]; then
     exit 3
 else
     ID=`${DOCKER} ps -a | grep home | grep arm | awk '{print $1}'`
-
     if [ "${ID}X" != "X" ]; then
+        if [ "${SAVE_PREV_CONFIG}X" = "YESX" ]; then
+            save_config $*
+        fi
         echo "Stopping $ID"
         docker stop ${ID}
     else
@@ -185,7 +266,7 @@ else
         echo "Removing Image $ID"
         docker rmi --force ${ID}
     else
-        echo "No container image found... (OK)"
+        echo "No container image found... OK"
     fi
 
     IMAGE=${IMAGE}${SUFFIX}
@@ -198,10 +279,22 @@ else
        ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}28519:28519 -p ${IP}28520:28520 -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
        if [ "$?" = "0" ]; then
            echo "mbed Connector bridge started!  SSH is available to log into the bridge runtime"
-           if [ "${NODE_RED_PORT}X" != "X" ]; then
-	        echo ""
-	        echo "Try this!  In your browser, go to: http://localhost:2880 to access the included NodeRED dashboard"
-           fi
+	   if [ "${SAVE_PREV_CONFIG}X" = "YESX" ]; then
+ 	       if [ "${SAVED_CONFIG}X" = "YESX" ]; then
+	           echo ""
+		   restore_config $*
+   	       else 
+                   if [ "${NODE_RED_PORT}X" != "X" ]; then
+	                echo ""
+	                echo "Try this!  In your browser, go to: http://localhost:2880 to access the included NodeRED dashboard"
+                   fi
+               fi
+           else
+	       if [ "${NODE_RED_PORT}X" != "X" ]; then
+                   echo ""
+                   echo "Try this!  In your browser, go to: http://localhost:2880 to access the included NodeRED dashboard"
+               fi
+	   fi
 	   exit 0
        else
 	   echo "mbed Connector bridge FAILED to start!"
