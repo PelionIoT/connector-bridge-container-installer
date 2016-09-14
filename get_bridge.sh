@@ -22,9 +22,9 @@ CLOUD_ARGS=""
 #
 # Enable/Disable previous bridge configuration save/restore
 #
-# Uncomment to ENABLE. Comment out to DISABLE
+# Uncomment (or set in shell environment) to ENABLE. Comment out to DISABLE
 #
-SAVE_PREV_CONFIG="YES"
+#SAVE_PREV_CONFIG="YES"
 
 # START: Optional Configuration for Cloud Providers (IBM Watson IoT, MS Azure IoTHub, Amazon IoT)
 #
