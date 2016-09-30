@@ -110,6 +110,12 @@ elif [ "$(uname)" = "MINGW64_NT-10.0" ]; then
     echo "IP Address:" ${IP} 
     BASE_IP=${IP}
     IP=${IP}:
+elif [ "$(uname)" = "MINGW64_NT-6.1" ]; then
+    # Windows - Must use the Docker Toolkit with the latest VirtualBox installed... pinned to 192.168.99.100
+    IP="192.168.99.100"
+    echo "IP Address:" ${IP}
+    BASE_IP=${IP}
+    IP=${IP}:
 else
     # (assume) Linux - docker running as native host - use the host IP address
     IP="`ip route get 8.8.8.8 | awk '{print $NF; exit}'`"
@@ -276,6 +282,7 @@ else
     ${DOCKER} pull ${IMAGE}
     if [ "$?" = "0" ]; then
        echo "Starting mbed Connector bridge image..."
+       echo ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}28519:28519 -p ${IP}28520:28520 -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
        ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}28519:28519 -p ${IP}28520:28520 -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
        if [ "$?" = "0" ]; then
            echo "mbed Connector bridge started!  SSH is available to log into the bridge runtime"
