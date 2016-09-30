@@ -18,6 +18,7 @@ MQTT_PORT=""
 API_TOKEN=""
 LONG_POLL=""
 CLOUD_ARGS=""
+LOCAL_NODERED="http://localhost:2880"
 
 #
 # Enable/Disable previous bridge configuration save/restore
@@ -110,12 +111,14 @@ elif [ "$(uname)" = "MINGW64_NT-10.0" ]; then
     echo "IP Address:" ${IP} 
     BASE_IP=${IP}
     IP=${IP}:
+    LOCAL_NODERED="http://192.168.99.100:2880"
 elif [ "$(uname)" = "MINGW64_NT-6.1" ]; then
     # Windows - Must use the Docker Toolkit with the latest VirtualBox installed... pinned to 192.168.99.100
     IP="192.168.99.100"
     echo "IP Address:" ${IP}
     BASE_IP=${IP}
     IP=${IP}:
+    LOCAL_NODERED="http://192.168.99.100:2880"
 else
     # (assume) Linux - docker running as native host - use the host IP address
     IP="`ip route get 8.8.8.8 | awk '{print $NF; exit}'`"
@@ -293,13 +296,13 @@ else
    	       else 
                    if [ "${NODE_RED_PORT}X" != "X" ]; then
 	                echo ""
-	                echo "Try this!  In your browser, go to: http://localhost:2880 to access the included NodeRED dashboard"
+	                echo "Try this!  In your browser, go to: ${LOCAL_NODERED} to access the included NodeRED dashboard"
                    fi
                fi
            else
 	       if [ "${NODE_RED_PORT}X" != "X" ]; then
                    echo ""
-                   echo "Try this!  In your browser, go to: http://localhost:2880 to access the included NodeRED dashboard"
+                   echo "Try this!  In your browser, go to: ${LOCAL_NODERED} to access the included NodeRED dashboard"
                fi
 	   fi
 	   exit 0
