@@ -21,6 +21,11 @@ CLOUD_ARGS=""
 LOCAL_NODERED="http://localhost:2880"
 
 #
+# ARM mbed REST API endpoint
+# 
+MBED_REST_API="api.connector.mbed.com"
+
+#
 # Enable/Disable previous bridge configuration save/restore
 #
 # Uncomment (or set in shell environment) to ENABLE. Comment out to DISABLE
@@ -148,31 +153,32 @@ fi
 
 if [ "${TYPE}" = "watson" ]; then
     SUFFIX="iotf"
-    CLOUD_ARGS="${API_TOKEN} ${IBM_WATSON_API_KEY} ${IBM_WATSON_AUTH_TOKEN}"
+    CLOUD_ARGS="${API_TOKEN} ${IBM_WATSON_API_KEY} ${IBM_WATSON_AUTH_TOKEN} ${MBED_REST_API}"
     API_TOKEN=""
 fi
 
 if [ "${TYPE}" = "iothub" ]; then
     SUFFIX="iothub"
-    CLOUD_ARGS="${API_TOKEN} ${MS_IOTHUB_HUBNAME} ${MS_IOTHUB_SAS_TOKEN}"
+    CLOUD_ARGS="${API_TOKEN} ${MS_IOTHUB_HUBNAME} ${MS_IOTHUB_SAS_TOKEN} ${MBED_REST_API}"
     API_TOKEN=""
 fi
 
 if [ "${TYPE}" = "aws" ]; then
     SUFFIX="awsiot"
-    CLOUD_ARGS="${API_TOKEN} ${AWS_IOT_REGION} ${AWS_IOT_ACCESS_KEY_ID} ${AWS_IOT_ACCESS_KEY_SECRET}"
+    CLOUD_ARGS="${API_TOKEN} ${AWS_IOT_REGION} ${AWS_IOT_ACCESS_KEY_ID} ${AWS_IOT_ACCESS_KEY_SECRET} ${MBED_REST_API}"
     API_TOKEN=""
 fi
 
 if [ "${TYPE}" = "generic-mqtt" ]; then
     SUFFIX="mqtt"
-    CLOUD_ARGS="${API_TOKEN} ${MQTT_IP_ADDRESS} ${MQTT_USERNAME} ${MQTT_PASSWORD} ${MQTT_CLIENTID} ${MQTT_PORT}"
+    CLOUD_ARGS="${API_TOKEN} ${MQTT_IP_ADDRESS} ${MQTT_USERNAME} ${MQTT_PASSWORD} ${MQTT_CLIENTID} ${MQTT_PORT} ${MBED_REST_API}"
     API_TOKEN=""
 fi
 
 if [ "${TYPE}" = "generic-mqtt-getstarted" ]; then
     SUFFIX="mqtt-getstarted"
     NODE_RED_PORT="-p ${IP}2880:1880"
+    CLOUD_ARGS="${MBED_REST_API}"
     MQTT_PORT="-p ${IP}3883:1883"
 fi
 
