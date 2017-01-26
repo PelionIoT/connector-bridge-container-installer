@@ -2,7 +2,7 @@ This is the installation script that can pull down and start the mbed Connector 
 
 Usage:
 
-   get_bridge.sh [watson | iothub | aws | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}
+   get_bridge.sh [watson | iothub | aws | google | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}
 
 Arguments:
 
@@ -11,6 +11,8 @@ Arguments:
    iotub - instantiate a bridge for Microsoft IoTHub
 
    aws - instantiate a bridge for AWS IoT
+
+   google - instantiate a bridge for Google Cloud
 
    generic-mqtt - instantiate a bridge for a generic MQTT broker such as Mosquitto
  
@@ -37,6 +39,8 @@ Requirements:
 	iothub: https://github.com/ARMmbed/connector-bridge-container-iothub
 	
 	aws: https://github.com/ARMmbed/connector-bridge-container-awsiot
+
+        google: https://github.com/ARMmbed/connector-bridge-container-google
 
 
 If you have chosen to enter your API token after the "pull" or if you have choosen "watson | aws | iothub", additional configuration is required to bind to the respective 3rd party cloud accounts:

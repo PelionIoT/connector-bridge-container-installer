@@ -78,6 +78,12 @@ AWS_IOT_ACCESS_KEY_ID=""
 AWS_IOT_ACCESS_KEY_SECRET=""
 
 #
+# Google Cloud Credentials
+#
+GOOGLE_APP_NAME=""
+GOOGLE_AUTH_JSON=""
+
+#
 # Standalone MQTT Broker
 #
 MQTT_IP_ADDRESS=""
@@ -161,6 +167,12 @@ fi
 if [ "${TYPE}" = "aws" ]; then
     SUFFIX="awsiot"
     CLOUD_ARGS="${API_TOKEN} ${AWS_IOT_REGION} ${AWS_IOT_ACCESS_KEY_ID} ${AWS_IOT_ACCESS_KEY_SECRET}"
+    API_TOKEN=""
+fi
+
+if [ "${TYPE}" = "google" ]; then
+    SUFFIX="google"
+    CLOUD_ARGS="${API_TOKEN} ${GOOGLE_APP_NAME} ${GOOGLE_AUTH_JSON}"
     API_TOKEN=""
 fi
 
