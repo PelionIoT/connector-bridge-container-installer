@@ -134,7 +134,7 @@ else
 fi
 
 if [ "${TYPE}X" = "X" ]; then
-    echo "Usage: $0 [watson | iothub | aws | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
+    echo "Usage: $0 [watson | iothub | aws | google | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
     exit 1
 fi
 
@@ -189,7 +189,7 @@ if [ "${TYPE}" = "generic-mqtt-getstarted" ]; then
 fi
 
 if [ "${SUFFIX}X" = "X" ]; then
-    echo "Usage: $0 [watson | iothub | aws | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
+    echo "Usage: $0 [watson | iothub | aws | google | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
     exit 2
 fi
 
@@ -261,7 +261,7 @@ restore_config() {
 DOCKER_VER="`docker --version`"
 if [ "${DOCKER_VER}X" = "X" ]; then
     echo "ERROR: docker does not appear to be installed! Please install docker and retry."
-    echo "Usage: $0 [watson | iothub | aws | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
+    echo "Usage: $0 [watson | iothub | aws | google | generic-mqtt | generic-mqtt-getstarted] {Connector API Token} {use-long-polling}"
     exit 3
 else
     ID=`${DOCKER} ps -a | grep home | grep arm | awk '{print $1}'`
