@@ -32,7 +32,7 @@ Requirements:
     
     - a DockerHub account created
 
-    - for "watson | aws | iothub" options, 3rd Party cloud accounts must be created. For more information see:
+    - for "watson | aws | iothub | google" options, 3rd Party cloud accounts must be created. For more information see:
 
 	watson: https://github.com/ARMmbed/connector-bridge-container-iotf
 	
