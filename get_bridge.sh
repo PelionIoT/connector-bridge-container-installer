@@ -204,8 +204,8 @@ save_config() {
 	SSH_IP=${IP}
     fi
     echo "Saving previous bridge configuration..."
-    #echo scp -q -P 2222 arm@${SSH_IP}/connector-bridge/conf/service.properties .
-    scp -q -P 2222 arm@${SSH_IP}/connector-bridge/conf/service.properties .
+    #echo scp -q -P 2222 arm@${SSH_IP}connector-bridge/conf/service.properties .
+    scp -q -P 2222 arm@${SSH_IP}connector-bridge/conf/service.properties .
     if [ $? != 0 ]; then
         echo "Saving of the previous configuration FAILED"
     else
@@ -240,8 +240,8 @@ restore_config() {
 	# echo ssh-keygen -R ${START}${SSH_IP}${STOP}2222
 	ssh-keygen -R ${START}${SSH_IP}${STOP}2222
         echo "Restoring previous configuration..."
-        # echo scp -q -P 2222 service.properties arm@${SCP_IP}/connector-bridge/conf
-        scp -q -q -P 2222 service.properties arm@${SCP_IP}/connector-bridge/conf
+        # echo scp -q -P 2222 service.properties arm@${SCP_IP}connector-bridge/conf
+        scp -q -q -P 2222 service.properties arm@${SCP_IP}connector-bridge/conf
 	if [ $? != 0 ]; then
 	    echo "Restoration of the previous configuration FAILED"
 	else
