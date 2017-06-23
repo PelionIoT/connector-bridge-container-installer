@@ -203,7 +203,7 @@ save_config() {
     else 
 	SSH_IP=${IP}
     fi
-    echo "Saving previous bridge configuration..."
+    echo "Saving previous bridge configuration...(default container pw: arm1234)"
     #echo scp -q -P 2222 arm@${SSH_IP}connector-bridge/conf/service.properties .
     scp -q -P 2222 arm@${SSH_IP}connector-bridge/conf/service.properties .
     if [ $? != 0 ]; then
@@ -234,12 +234,12 @@ restore_config() {
             SSH_IP=${BASE_IP}
 	    START=""
 	    STOP=""
-	    SCP_IP="${SSH_IP}"
+	    SCP_IP="${SSH_IP}:"
         fi
  	echo "Beginning restoration... Updating known_hosts..."
 	# echo ssh-keygen -R ${START}${SSH_IP}${STOP}2222
 	ssh-keygen -R ${START}${SSH_IP}${STOP}2222
-        echo "Restoring previous configuration..."
+        echo "Restoring previous configuration... (default container pw: arm1234)"
         # echo scp -q -P 2222 service.properties arm@${SCP_IP}connector-bridge/conf
         scp -q -q -P 2222 service.properties arm@${SCP_IP}connector-bridge/conf
 	if [ $? != 0 ]; then

@@ -60,13 +60,11 @@ Additional Notes:
 
      - Each bridge runtime also has "ssh" (default port: 2222) installed so that you can ssh into the runtime and tinker with it. The default username is "arm" and password "arm1234"
 
-     - For the "getstarted" option, there is a NODEFLOW-getstarted.txt file that you can copy and paste into your NodeRED runtime located at http://<macOS or ubuntu host IP address>:2880 ... simply import and Deploy... You can then load and run the K64F sample https://github.com/ARMmbed/mbed-ethernet-sample-withdm and interact with it via the imported flow (you must change your MBED_ENDPOINT_NAME in both the endpoint code as well as the NODEFLOW nodes...)
-
      - For the test scripts, I've had issues with paho-mqtt v1.2. Try v1.1... seems to work better.
 
      - FYI, ./remove_bridge.sh removes the bridge if desired... it also removes the downloaded docker image
 
-     - DockerToolkit (OLD MacOS) uses Oracle VirtualBox which pins the default IP address to 192.168.99.100. If you happen to change this in your installation of Docker on MacOS, you will need to edit get_bridge.sh and adjust accordingly.
+     - DockerToolkit uses Oracle VirtualBox which pins the default IP address to 192.168.99.100. If you happen to change this in your installation of Docker on MacOS, you will need to edit get_bridge.sh and adjust accordingly.
 
      - Bridge source is Apache licensed and located here: https://github.com/ARMmbed/connector-bridge
 
