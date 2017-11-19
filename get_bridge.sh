@@ -21,6 +21,24 @@ CLOUD_ARGS=""
 LOCAL_NODERED="http://localhost:2880"
 
 #
+# Set to a base port number (non-SSL). SSL will be base_port_number+1
+#
+BASE_PORT_NUMBER=28519
+
+#
+# Override base port number 
+#
+if [ "${OVERRIDE_PORT_NUMBER}X" != "X" ]; then
+    BASE_PORT_NUMBER=${OVERRIDE_PORT_NUMBER}
+fi
+
+#
+# Calculate the non-SSL and SSL numbers
+#
+NON_SSL_PORT=${BASE_PORT_NUMBER}
+SSL_PORT=`expr ${NON_SSL_PORT} + 1`
+
+#
 # Enable/Disable previous bridge configuration save/restore
 #
 # Uncomment (or set in shell environment) to ENABLE. Comment out to DISABLE
@@ -297,8 +315,8 @@ else
     ${DOCKER} pull ${IMAGE}
     if [ "$?" = "0" ]; then
        echo "Starting mbed Connector bridge image..."
-       echo ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}28519:28519 -p ${IP}28520:28520 -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
-       ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}28519:28519 -p ${IP}28520:28520 -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
+       echo ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}${NON_SSL_PORT}:${NON_SSL_PORT} -p ${IP}${SSL_PORT}:${SSL_PORT} -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
+       ${DOCKER} run -d ${MQTT_PORT} ${NODE_RED_PORT} -p ${IP}${NON_SSL_PORT}:${NON_SSL_PORT} -p ${IP}${SSL_PORT}:${SSL_PORT} -p ${IP}${BRIDGE_SSH}:22 -p ${IP}8234:8234 -t ${IMAGE}  /home/arm/start_instance.sh ${API_TOKEN} ${LONG_POLL} ${CLOUD_ARGS}
        if [ "$?" = "0" ]; then
            echo "mbed Connector bridge started!  SSH is available to log into the bridge runtime"
 	   if [ "${SAVE_PREV_CONFIG}X" = "YESX" ]; then
