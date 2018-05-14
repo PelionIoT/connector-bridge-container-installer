@@ -1,4 +1,4 @@
-This is the installation script that can pull down and start the mbed Connector bridge.
+This is the installation script that can pull down and start the mbed Connector/mbed Cloud bridge.
 
 Usage:
 
