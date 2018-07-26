@@ -63,6 +63,8 @@ Additional Notes:
      - For the test scripts, I've had issues with paho-mqtt v1.2. Try v1.1... seems to work better.
 
      - FYI, ./remove_bridge.sh removes the bridge if desired... it also removes the downloaded docker image
+   
+     - FYI, ./backup_bridge.sh and ./restore_bridge.sh are two scripts that help backup and restore bridge configurations.  You will need to modify DOCKERIP in both to point to your bridge's docker host IP (default is: "localhost")
 
      - DockerToolkit uses Oracle VirtualBox which pins the default IP address to 192.168.99.100. If you happen to change this in your installation of Docker on MacOS, you will need to edit get_bridge.sh and adjust accordingly.
 
